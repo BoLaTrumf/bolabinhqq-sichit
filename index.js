@@ -364,8 +364,14 @@ app.get('/sicbo', async (req, res) => {
   }));
 
   const lastResult = history[history.length - 1];
-  const nextGameNum = `#${(parseInt(lastResult.session.substring(1)) + 1).toString().padStart(7, '0')}`;
-
+  
+  // Lấy số từ chuỗi phiên và chuyển sang số nguyên
+  const lastSessionNumber = parseInt(lastResult.session.substring(1));
+  // Tăng số phiên lên 1
+  const nextSessionNumber = lastSessionNumber + 1;
+  // Format lại thành chuỗi 7 chữ số, có padding bằng '0'
+  const nextGameNum = `#${nextSessionNumber.toString().padStart(7, '0')}`;
+  
   const { prediction: dudoan_final, reason: dudoan_vi, do_tin_cay } = generatePrediction(history);
 
   const finalJson = {
