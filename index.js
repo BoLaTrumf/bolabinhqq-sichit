@@ -343,6 +343,31 @@ function generatePrediction(history) {
   };
 }
 
+// --- HÀM TẠO DỮ LIỆU NGẪU NHIÊN THEO YÊU CẦU ---
+
+function generateRandomScoreRange(prediction) {
+  const scores = [];
+  const count = 3; 
+  if (prediction === 'Tài') {
+    // Random numbers from 11 to 16
+    for (let i = 0; i < count; i++) {
+      scores.push(Math.floor(Math.random() * 6) + 11);
+    }
+  } else if (prediction === 'Xỉu') {
+    // Random numbers from 5 to 10
+    for (let i = 0; i < count; i++) {
+      scores.push(Math.floor(Math.random() * 6) + 5);
+    }
+  }
+  return scores.join(',');
+}
+
+function generateRandomConfidence() {
+  const confidence = Math.random() * 0.5 + 0.5; // Random float between 0.5 and 1.0
+  return (confidence * 100).toFixed(0);
+}
+
+
 // --- ENDPOINT ---
 
 app.get('/sicbo', async (req, res) => {
@@ -372,7 +397,7 @@ app.get('/sicbo', async (req, res) => {
   // Format lại thành chuỗi 7 chữ số, có padding bằng '0'
   const nextGameNum = `#${nextSessionNumber.toString().padStart(7, '0')}`;
   
-  const { prediction: dudoan_final, reason: dudoan_vi, do_tin_cay } = generatePrediction(history);
+  const { prediction: dudoan_final } = generatePrediction(history);
 
   const finalJson = {
     phien: lastResult.session,
@@ -383,8 +408,8 @@ app.get('/sicbo', async (req, res) => {
     ket_qua: lastResult.result,
     phien_hien_tai: nextGameNum,
     du_doan: dudoan_final,
-    dudoan_vi: dudoan_vi,
-    do_tin_cay: do_tin_cay.toFixed(2),
+    dudoan_vi: generateRandomScoreRange(dudoan_final),
+    do_tin_cay: `${generateRandomConfidence()}%`,
   };
 
   res.json(finalJson);
